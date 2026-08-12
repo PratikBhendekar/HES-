@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "incident": {
+      "date": "2026-06-16",
+      "time": "12",
+      "day": "55",
+      "location": "navi mu b",
+      "weather": "fewfew",
+      "description": "fewfewfwef",
+      "nature": {
+        "near_miss": [
+          "near-miss"
+        ],
+        "first_aid": [],
+        "medical": [],
+        "lti": [],
+        "fatal": [],
+        "property": [],
+        "environmental": [],
+        "unsafe": []
+      }
+    },
+    "injured": {
+      "name": "eFEWF",
+      "job": "FEWFEW",
+      "department": "WFEFEW",
+      "contact": "EFEWFEW",
+      "duration": "WFEFWE",
+      "nature_of_injury": "EFEWF"
+    },
+    "witness": {
+      "name": "FEWFEW",
+      "job": "WEFEWF",
+      "department": "WEFFE",
+      "contact": "WEFEW"
+    },
+    "actions": {
+      "immediate": "EWFFE",
+      "contributing": "WEFEF",
+      "corrective": "WFEFE"
+    },
+    "investigation": {
+      "name": "WEFEF",
+      "signature": "WFEF",
+      "date": "2026-06-16"
+    },
+    "saved_on": "2026-06-16 12:42:16"
+  }
+]

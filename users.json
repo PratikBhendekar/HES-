@@ -1,0 +1,44 @@
+{
+  "admin": {
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "name": "Administrator",
+    "role": "admin",
+    "email": "admin@cstech.com"
+  },
+  "procurement": {
+    "password": "5693b5d11f940e00c1811468f9e29eb7f307348c4974a39809a0e005f4aeaf02",
+    "name": "Procurement User",
+    "role": "procurement",
+    "email": "procurement@cstech.com"
+  },
+  "vendor": {
+    "password": "00fc1e6c602824793c9840e781e5e20747507e26ddf0d60fab996567a0327cdf",
+    "name": "Vendor User",
+    "role": "vendor",
+    "email": "vendor@cstech.com"
+  },
+  "pratik": {
+    "password": "5b44f58a727847149b004ffd2ce946f7392b011802b4f2a25dbda2d75e6c8556",
+    "name": "Pratik Bhendekar",
+    "role": "admin",
+    "email": "pratik@cstech.com"
+  },
+  "hr": {
+    "password": "070a3b5e8d4bd5c46acccb91c9c54614c0cd649e78c4c4719e3a64270bae5ddf",
+    "name": "HR Manager",
+    "role": "hr",
+    "email": "hr@cstech.com"
+  },
+  "operation": {
+    "password": "362e4f232c0f2fb110ac652338b3f20d2b99db1e7c012b7eb3382f27a3086251",
+    "name": "Operation Manager",
+    "role": "operation",
+    "email": "ops@cstech.com"
+  },
+  "ehs": {
+    "password": "72adfde0f3d06fa3a975885c49f3058745531521caaabd93bf5b4a3add7e5909",
+    "name": "EHS Manager",
+    "role": "ehs",
+    "email": "ehs@cstech.com"
+  }
+}
