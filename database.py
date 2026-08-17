@@ -7,11 +7,12 @@ from datetime import datetime
 
 # Database Configuration
 DB_CONFIG = {
-    "user": "postgres",
-    "password": "Pratik@123",
-    "host": "localhost",
-    "port": "5432",
-    "database": "IMS"
+    "host": "dpg-da19g60u01pc739p38ng-a.oregon-postgres.render.com",
+    "port": 5432,
+    "database": "myapp_db_6ib9",
+    "user": "root",
+    "password": "XtTOo80UcpHbGxb88fSKGbr0J7a8pYaP",
+    "sslmode": "require"
 }
 
 def get_db_connection():
