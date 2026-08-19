@@ -1,9 +1,9 @@
-# app.py - Complete Integrated Management System
+# app.py - Complete Integrated Management System with Advanced Design
 
 import dash
 from dash import Dash, html, dcc, Input, Output, State, callback_context, no_update
 import dash_bootstrap_components as dbc
-from flask import session, redirect, request
+from flask import Flask, session, redirect, request, send_from_directory
 import secrets
 from pathlib import Path
 import os
@@ -39,12 +39,630 @@ from pages.ims_policy import ims_policy_page
 from pages.incident_investigation import incident_investigation_page, register_incident_investigation_callbacks
 from pages.quality_assurance import quality_assurance_page, register_qa_callbacks
 from pages.isms import isms_page, register_isms_callbacks
-from pages.nrc import nrc_page, register_nrc_callbacks  # ADD NRC IMPORT
-from routes.auth_routes import server
-from utils.helpers import load_logo
-from database import get_report_data
+from pages.nrc import nrc_page, register_nrc_callbacks
 
-# -------------------- IMAGE ENCODING FOR CAROUSEL --------------------
+# ==================== TICKET PAGES IMPORTS ====================
+from pages.ticket_safety_observation import ticket_safety_observation_page, register_ticket_safety_callbacks
+from pages.ticket_new_joiner import ticket_new_joiner_page, register_ticket_joiner_callbacks
+from pages.ticket_vendor_orientation import ticket_vendor_orientation_page, register_ticket_vendor_callbacks
+from pages.ticket_incident_report import ticket_incident_report_page, register_ticket_incident_callbacks
+
+from routes.auth_routes import auth_bp
+from utils.helpers import load_logo
+from database import get_report_data, authenticate_user
+
+# ==================== CREATE FLASK SERVER ====================
+server = Flask(__name__)
+server.secret_key = SECRET_KEY
+server.register_blueprint(auth_bp)
+
+# ==================== LOAD LOGO ====================
+logo_data = load_logo(LOGO_PATH)
+
+# ==================== IMAGE ENCODING FUNCTION ====================
+def encode_image_to_base64(image_path):
+    """Convert image to base64 for embedding in HTML"""
+    try:
+        if Path(image_path).exists():
+            with open(image_path, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode()
+            ext = Path(image_path).suffix.lower()
+            if ext in ['.jpg', '.jpeg']:
+                mime = 'image/jpeg'
+            elif ext == '.png':
+                mime = 'image/png'
+            elif ext == '.avif':
+                mime = 'image/avif'
+            else:
+                mime = 'image/jpeg'
+            return f"data:{mime};base64,{encoded}"
+        else:
+            print(f"⚠️ Image not found: {image_path}")
+    except Exception as e:
+        print(f"Error encoding image {image_path}: {e}")
+    return None
+
+# ==================== ENCODE IMAGES ====================
+BACKGROUND_IMAGE_PATH = r"C:\Users\12797\Downloads\premium_photo-1681823094945-41f3c086d5ec.avif"
+LOGO_IMAGE_PATH = r"C:\Users\12797\Videos\07\HES1 - Copy\assets\Screenshot 2026-05-26 154737.png"
+
+BACKGROUND_BASE64 = encode_image_to_base64(BACKGROUND_IMAGE_PATH)
+LOGO_BASE64 = encode_image_to_base64(LOGO_IMAGE_PATH)
+
+print("=" * 60)
+print("IMAGE ENCODING STATUS:")
+print(f"Background Image: {'✅ LOADED' if BACKGROUND_BASE64 else '❌ FAILED'}")
+print(f"Logo Image: {'✅ LOADED' if LOGO_BASE64 else '❌ FAILED'}")
+print("=" * 60)
+
+# ==================== BLUES NEWS LOGIN PAGE ====================
+BLUES_NEWS_LOGIN = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSTECH Ai IMS Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{
+            min-height: 100vh;
+            width: 100%;
+        }}
+        body {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: url('{BACKGROUND_BASE64}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative;
+        }}
+        body::before {{
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(0.5px);
+            z-index: 0;
+        }}
+        .container {{
+            background: #ffffff;
+            border-radius: 28px;
+            max-width: 1100px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.20);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }}
+        .left-panel {{
+            background: linear-gradient(145deg, #1a3a6a, #0d2b55);
+            color: #ffffff;
+            padding: 45px 35px;
+            flex: 1 1 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            min-height: 500px;
+        }}
+        .left-panel .logo-img {{
+            text-align: center;
+            margin-bottom: 22px;
+        }}
+        .left-panel .logo-img img {{
+            max-width: 180px;
+            height: auto;
+            border-radius: 16px;
+            background: #ffffff;
+            padding: 12px 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.30);
+            border: 2px solid rgba(79, 195, 247, 0.3);
+            transition: 0.3s;
+        }}
+        .left-panel .logo-img img:hover {{
+            transform: scale(1.03);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.40);
+        }}
+        .left-panel h1 {{
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }}
+        .left-panel h1 .highlight {{
+            color: #4fc3f7;
+            font-weight: 900;
+        }}
+        .left-panel .subhead {{
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 32px;
+            border-left: 4px solid #4fc3f7;
+            padding-left: 16px;
+            color: #b3d9f5;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(4px);
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 600;
+        }}
+        .role-grid {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 6px;
+        }}
+        .role-card {{
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            border-radius: 12px;
+            padding: 20px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }}
+        .role-card:hover {{
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.20);
+            border-color: rgba(79, 195, 247, 0.3);
+        }}
+        .role-card i {{
+            font-size: 22px;
+            color: #4fc3f7;
+            margin-bottom: 8px;
+            background: rgba(79, 195, 247, 0.10);
+            padding: 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }}
+        .role-card h4 {{
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+        }}
+        .role-card p {{
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 4px;
+            color: #b3d9f5;
+        }}
+        .right-panel {{
+            padding: 45px 40px;
+            flex: 1 1 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(145deg, #e8f0fe, #d4e4f7);
+            position: relative;
+        }}
+        .right-panel .login-header {{
+            margin-bottom: 28px;
+        }}
+        .right-panel .login-header h2 {{
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0a1f33;
+            text-transform: uppercase;
+        }}
+        .right-panel .login-header h2 .login-highlight {{
+            color: #1a6a9e;
+            font-weight: 900;
+        }}
+        .right-panel .login-header .login-sub {{
+            font-family: 'Open Sans', sans-serif;
+            color: #4a6a8a;
+            font-size: 13px;
+            font-weight: 400;
+            margin-top: 4px;
+        }}
+        .form-group {{
+            margin-bottom: 18px;
+        }}
+        .form-group label {{
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a2e44;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }}
+        .form-group label i {{
+            color: #1a6a9e;
+            margin-right: 6px;
+        }}
+        .form-group input {{
+            width: 100%;
+            padding: 13px 18px;
+            border: 2px solid rgba(200, 215, 235, 0.6);
+            border-radius: 10px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.85);
+            color: #0b1a2e;
+        }}
+        .form-group input:focus {{
+            outline: none;
+            border-color: #1a6a9e;
+            box-shadow: 0 0 0 4px rgba(26, 92, 138, 0.08);
+            background: #ffffff;
+        }}
+        .form-group input::placeholder {{
+            color: #8aa3c0;
+            font-weight: 300;
+            font-size: 13px;
+        }}
+        .remember-row {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            margin-bottom: 24px;
+        }}
+        .remember-row label {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1a2e44;
+            cursor: pointer;
+        }}
+        .remember-row label input[type="checkbox"] {{
+            width: 17px;
+            height: 17px;
+            accent-color: #1a6a9e;
+            cursor: pointer;
+        }}
+        .remember-row a {{
+            color: #1a6a9e;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+        }}
+        .remember-row a:hover {{
+            color: #0d4a7a;
+            text-decoration: underline;
+        }}
+        .btn-login {{
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0d2b55, #1a4a7a);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(13, 43, 85, 0.30);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        .btn-login:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(13, 43, 85, 0.40);
+            background: linear-gradient(135deg, #0d2b55, #1a5a8a);
+        }}
+        .btn-login i {{
+            margin-right: 8px;
+        }}
+        .divider {{
+            text-align: center;
+            margin: 22px 0 18px;
+            color: #6a8aaa;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        .divider::before,
+        .divider::after {{
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: rgba(200, 215, 235, 0.6);
+        }}
+        .divider::before {{ left: 0; }}
+        .divider::after {{ right: 0; }}
+        .btn-microsoft {{
+            width: 100%;
+            padding: 13px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(200, 215, 235, 0.6);
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a2e44;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }}
+        .btn-microsoft:hover {{
+            background: #ffffff;
+            border-color: #1a6a9e;
+            box-shadow: 0 4px 20px rgba(26, 92, 138, 0.06);
+        }}
+        .btn-microsoft i {{
+            font-size: 20px;
+            color: #2b5797;
+        }}
+        .footer-tags {{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 32px;
+            gap: 8px;
+            border-top: 1px solid rgba(200, 215, 235, 0.4);
+            padding-top: 24px;
+        }}
+        .footer-tags span {{
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            color: #1a2e44;
+            font-weight: 700;
+            text-transform: uppercase;
+        }}
+        .footer-tags span i {{
+            margin-right: 6px;
+            color: #1a6a9e;
+        }}
+        .footer-tags .tag-desc {{
+            font-weight: 400;
+            color: #5a7a9a;
+            font-size: 10px;
+            margin-left: 4px;
+            font-family: 'Open Sans', sans-serif;
+            text-transform: none;
+        }}
+        .footer-bottom {{
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 18px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            color: #6a8aaa;
+            border-top: 1px solid rgba(200, 215, 235, 0.4);
+            padding-top: 18px;
+        }}
+        .footer-bottom a {{
+            color: #1a6a9e;
+            text-decoration: none;
+            margin: 0 6px;
+            transition: 0.2s;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+        }}
+        .footer-bottom a:hover {{
+            color: #0d4a7a;
+            text-decoration: underline;
+        }}
+        @media (max-width: 750px) {{
+            .left-panel, .right-panel {{ flex: 1 1 100%; }}
+            .role-grid {{ grid-template-columns: 1fr 1fr; }}
+            .left-panel .logo-img img {{ max-width: 140px; }}
+            .left-panel {{ border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); min-height: 400px; }}
+            .right-panel {{ border-left: none; }}
+            .left-panel h1 {{ font-size: 26px; }}
+            .right-panel .login-header h2 {{ font-size: 22px; }}
+        }}
+        @media (max-width: 450px) {{
+            .role-grid {{ grid-template-columns: 1fr; }}
+            .left-panel h1 {{ font-size: 20px; }}
+            .right-panel {{ padding: 25px 20px; }}
+            .left-panel {{ padding: 25px 20px; min-height: 350px; }}
+            .left-panel .logo-img img {{ max-width: 110px; padding: 8px 14px; }}
+            .right-panel .login-header h2 {{ font-size: 18px; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo-img">
+                <img src="{LOGO_BASE64}" alt="CSTECH Ai Logo" />
+            </div>
+            <h1>Welcome to <span class="highlight">CSTECH Ai</span> IMS Portal</h1>
+            <div class="subhead">
+                One Integrated Platform for Quality, Safety, Environment, Compliance &amp; Excellence.
+            </div>
+            <div class="role-grid">
+                <div class="role-card">
+                    <i class="fas fa-user"></i>
+                    <h4>Employee</h4>
+                    <p>Access your tasks, training and records</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-tasks"></i>
+                    <h4>Project Manager</h4>
+                    <p>Manage projects, resources and progress</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h4>QA Team</h4>
+                    <p>Ensure quality, audits and compliance</p>
+                </div>
+                <div class="role-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <h4>Management</h4>
+                    <p>View dashboards, reports and insights</p>
+                </div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="login-header">
+                <h2>Login to <span class="login-highlight">your account</span></h2>
+                <p class="login-sub">Please enter your credentials to continue</p>
+            </div>
+            <form method="POST" action="/login">
+                <div class="form-group">
+                    <label for="loginId"><i class="fas fa-user-circle"></i> Login ID / Email</label>
+                    <input type="text" id="loginId" name="username" placeholder="Enter your email or ID" required />
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required />
+                </div>
+                <div class="remember-row">
+                    <label>
+                        <input type="checkbox" name="remember" /> Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </form>
+            <div class="divider">or</div>
+            <button class="btn-microsoft" onclick="alert('🔷 Redirecting to Microsoft login...')">
+                <i class="fab fa-microsoft"></i> Sign in with Microsoft
+            </button>
+            <div class="footer-tags">
+                <span><i class="fas fa-shield-alt"></i> Secure <span class="tag-desc">— role-based access</span></span>
+                <span><i class="fas fa-clock"></i> Reliable <span class="tag-desc">— always available</span></span>
+                <span><i class="fas fa-chart-line"></i> Insightful <span class="tag-desc">— real-time dashboards</span></span>
+                <span><i class="fas fa-handshake"></i> Collaborative <span class="tag-desc">— better together</span></span>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2024 CSTECH Ai. All rights reserved.</span>
+                <span>
+                    <a href="#">Privacy Policy</a> |
+                    <a href="#">Terms of Use</a> |
+                    <a href="#">Support</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+# ==================== LOGIN FAILED PAGE ====================
+LOGIN_FAILED_PAGE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Failed</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(145deg, #1a3a6a, #0d2b55);
+        }
+        .error-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 420px;
+            border: 2px solid rgba(79, 195, 247, 0.2);
+        }
+        .error-box i { font-size: 60px; color: #ef4444; margin-bottom: 15px; }
+        h2 { font-family: 'Montserrat', sans-serif; color: #ef4444; margin-bottom: 15px; text-transform: uppercase; }
+        p { font-family: 'Open Sans', sans-serif; color: #64748b; margin-bottom: 20px; }
+        .btn {
+            background: linear-gradient(145deg, #1a3a6a, #0d2b55);
+            color: white;
+            padding: 14px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(13, 43, 85, 0.3); }
+        .creds-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px dashed #cbd5e1;
+        }
+        .creds-box h4 { font-family: 'Montserrat', sans-serif; color: #1a2e44; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; }
+        .cred-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #475569; font-family: 'Open Sans', sans-serif; font-size: 13px; }
+        .cred-label { font-weight: 600; }
+        .cred-value { color: #1a6a9e; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <i class="fas fa-times-circle"></i>
+        <h2>Login Failed</h2>
+        <p>Invalid username or password. Please try again.</p>
+        <div class="creds-box">
+            <h4>📋 Demo Credentials</h4>
+            <div class="cred-row">
+                <span class="cred-label">Username:</span>
+                <span class="cred-value">Pratik Bhendekar</span>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">Password:</span>
+                <span class="cred-value">pratik@123</span>
+            </div>
+        </div>
+        <a href="/login" class="btn"><i class="fas fa-arrow-left"></i> Try Again</a>
+    </div>
+</body>
+</html>
+"""
+
+# ==================== IMAGE ENCODING FOR CAROUSEL ====================
 def encode_image(image_path):
     try:
         if Path(image_path).exists():
@@ -66,7 +684,7 @@ image_paths = [
 
 encoded_images = [encode_image(path) for path in image_paths if encode_image(path)]
 
-# -------------------- DASH APP --------------------
+# ==================== DASH APP ====================
 app = Dash(
     __name__, 
     server=server,
@@ -76,7 +694,7 @@ app = Dash(
     requests_pathname_prefix='/'
 )
 
-# -------------------- CSS STYLES --------------------
+# ==================== FULL CSS STYLES ====================
 app.index_string = """
 <!DOCTYPE html>
 <html>
@@ -643,14 +1261,8 @@ app.index_string = """
         }
         
         @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         
         .modal-header {
@@ -666,28 +1278,10 @@ app.index_string = """
             z-index: 10;
         }
         
-        .modal-header h2 {
-            font-size: 20px;
-            color: #667eea;
-            font-weight: 700;
-        }
-        
-        .modal-close {
-            cursor: pointer;
-            color: #94a3b8;
-            font-size: 20px;
-            transition: all 0.2s ease;
-        }
-        
-        .modal-close:hover {
-            color: #ef4444;
-            transform: rotate(90deg);
-        }
-        
-        .modal-body {
-            padding: 20px;
-        }
-        
+        .modal-header h2 { font-size: 20px; color: #667eea; font-weight: 700; }
+        .modal-close { cursor: pointer; color: #94a3b8; font-size: 20px; transition: all 0.2s ease; }
+        .modal-close:hover { color: #ef4444; transform: rotate(90deg); }
+        .modal-body { padding: 20px; }
         .modal-footer {
             padding: 16px 20px;
             border-top: 1px solid #e2e8f0;
@@ -697,7 +1291,6 @@ app.index_string = """
             background: #f8fafc;
             border-radius: 0 0 16px 16px;
         }
-        
         .modal-btn {
             padding: 8px 20px;
             border-radius: 8px;
@@ -707,66 +1300,17 @@ app.index_string = """
             transition: all 0.2s ease;
             font-size: 13px;
         }
+        .modal-btn.cancel { background: #f1f5f9; color: #64748b; }
+        .modal-btn.cancel:hover { background: #e2e8f0; transform: translateY(-2px); }
+        .modal-btn.submit { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .modal-btn.submit:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
         
-        .modal-btn.cancel {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        
-        .modal-btn.cancel:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
-        }
-        
-        .modal-btn.submit {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-        
-        .modal-btn.submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        .form-group.half {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #1e293b;
-            font-size: 13px;
-        }
-        
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+        .form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        .form-group { margin-bottom: 16px; }
+        .form-group.half { flex: 1; min-width: 200px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 6px; color: #1e293b; font-size: 13px; }
+        .form-input, .form-textarea { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; transition: all 0.3s ease; background: white; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
         
         .carousel-section {
             background: white;
@@ -828,9 +1372,7 @@ app.index_string = """
             border-radius: 16px;
         }
         
-        .carousel-container {
-            text-align: center;
-        }
+        .carousel-container { text-align: center; }
         
         .carousel-image-container {
             width: 100%;
@@ -851,9 +1393,7 @@ app.index_string = """
             transition: transform 0.3s ease;
         }
         
-        .carousel-image:hover {
-            transform: scale(1.02);
-        }
+        .carousel-image:hover { transform: scale(1.02); }
         
         .carousel-dots {
             display: flex;
@@ -871,16 +1411,8 @@ app.index_string = """
             transition: all 0.3s ease;
         }
         
-        .dot:hover {
-            background: #667eea;
-            transform: scale(1.2);
-        }
-        
-        .dot.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            width: 25px;
-            border-radius: 10px;
-        }
+        .dot:hover { background: #667eea; transform: scale(1.2); }
+        .dot.active { background: linear-gradient(135deg, #667eea, #764ba2); width: 25px; border-radius: 10px; }
         
         .placeholder-page { background: white; border-radius: 14px; padding: 40px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .placeholder-title { font-size: 24px; font-weight: 700; color: #1e293b; margin-bottom: 12px; }
@@ -971,9 +1503,327 @@ app.index_string = """
 </html>
 """
 
-logo_data = load_logo(LOGO_PATH)
+# ==================== AUTHENTICATION MIDDLEWARE ====================
+@app.server.before_request
+def check_login():
+    public_routes = ['/login', '/logout', '/download-permit', '/assets']
+    
+    if any(request.path.startswith(route) for route in public_routes):
+        return None
+    
+    if request.path.startswith('/_dash-') or request.path.startswith('/assets'):
+        return None
+    
+    if 'user_id' not in session:
+        return redirect('/login')
+    
+    return None
 
-# -------------------- PAGE FUNCTIONS --------------------
+# ==================== MAIN LAYOUT ====================
+app.layout = html.Div([
+    dcc.Location(id="url", refresh=False),
+    dcc.Store(id="session-store", data={}),
+    dcc.Download(id="download-permit"),
+    html.Div(className="app-container", children=[
+        create_sidebar(logo_data),
+        html.Div(className="main-content", id="page-content")
+    ])
+])
+
+# ==================== COMBINED NAVIGATION CALLBACKS ====================
+@app.callback(
+    Output("user-info-sidebar", "children"),
+    Input("url", "pathname")
+)
+def update_user_info(pathname):
+    if 'user_id' in session:
+        name = session.get('name', 'User')
+        username = session.get('username', '')
+        user_type = session.get('user_type', 'user').upper()
+        return html.Div([
+            html.Div(name, className="user-name"),
+            html.Div(username, className="user-role"),
+            html.Div(className="user-role-badge", children=user_type),
+            html.A(className="logout-btn", href="/logout", children=[
+                html.I(className="fas fa-sign-out-alt"), "Logout"
+            ])
+        ])
+    else:
+        return html.Div([
+            html.Div("Guest", className="user-name"),
+            html.Div("", className="user-role"),
+            html.Div(className="user-role-badge", children="GUEST"),
+            html.A(className="logout-btn", href="/login", children=[
+                html.I(className="fas fa-sign-in-alt"), "Login"
+            ])
+        ])
+
+@app.callback(
+    [Output("qms-submenu", "className"),
+     Output("qms-arrow", "className")],
+    [Input("qms-toggle", "n_clicks")],
+    [State("qms-submenu", "className")]
+)
+def toggle_qms_submenu(n_clicks, current_class):
+    if n_clicks and n_clicks > 0:
+        if "expanded" in current_class:
+            return "submenu collapsed", "fas fa-chevron-right arrow-icon"
+        else:
+            return "submenu expanded", "fas fa-chevron-down arrow-icon"
+    return "submenu collapsed", "fas fa-chevron-right arrow-icon"
+
+def create_dots(active_index):
+    if not encoded_images:
+        return html.Div()
+    return html.Div([
+        html.Div(className=f"dot {'active' if i == active_index else ''}", id=f"dot-{i}")
+        for i in range(len(encoded_images))
+    ])
+
+@app.callback(
+    [Output("carousel-index", "data", allow_duplicate=True),
+     Output("current-slide-image", "src", allow_duplicate=True),
+     Output("slide-indicator", "children", allow_duplicate=True),
+     Output("carousel-dots", "children", allow_duplicate=True)],
+    [Input("next-slide", "n_clicks"),
+     Input("prev-slide", "n_clicks")],
+    [State("carousel-index", "data")],
+    prevent_initial_call=True
+)
+def carousel_nav(next_clicks, prev_clicks, current_index):
+    ctx = callback_context
+    if not ctx.triggered:
+        return current_index, encoded_images[current_index] if encoded_images else "", f"{current_index+1} / {len(encoded_images)}" if encoded_images else "0 / 0", create_dots(current_index)
+    
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    current = current_index if current_index else 0
+    total = len(encoded_images)
+    
+    if total == 0:
+        return 0, "", "0 / 0", html.Div()
+    
+    if button_id == "next-slide":
+        new_index = (current + 1) % total
+    elif button_id == "prev-slide":
+        new_index = (current - 1) % total    
+    else:
+        new_index = current
+    
+    return new_index, encoded_images[new_index], f"{new_index+1} / {total}", create_dots(new_index)
+
+# ==================== NAVIGATION CALLBACK FOR TICKET CARDS ====================
+@app.callback(
+    Output("url", "pathname", allow_duplicate=True),
+    [Input("card-safety-ticket", "n_clicks"),
+     Input("card-joiner-ticket", "n_clicks"),
+     Input("card-vendor-ticket", "n_clicks"),
+     Input("card-incident-ticket", "n_clicks")],
+    prevent_initial_call=True
+)
+def navigate_ticket_cards(safety, joiner, vendor, incident):
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
+    
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
+    nav_map = {
+        "card-safety-ticket": "/ticket-safety-observation",
+        "card-joiner-ticket": "/ticket-new-joiner",
+        "card-vendor-ticket": "/ticket-vendor-orientation",
+        "card-incident-ticket": "/ticket-incident-report"
+    }
+    
+    if button_id in nav_map:
+        return nav_map[button_id]
+    
+    return no_update
+
+# ==================== NAVIGATION CALLBACK FOR TICKET TOGGLE ====================
+@app.callback(
+    [Output("ticket-cards-container", "style"),
+     Output("raise-ticket-arrow", "className")],
+    [Input("raise-ticket-main-card", "n_clicks")],
+    [State("ticket-cards-container", "style")]
+)
+def toggle_ticket_cards(n_clicks, current_style):
+    if n_clicks and n_clicks > 0:
+        if current_style and current_style.get('display') == 'grid':
+            return {'display': 'none'}, "fas fa-chevron-down"
+        else:
+            return {
+                'display': 'grid',
+                'padding': '0 20px 20px 20px',
+                'gridTemplateColumns': 'repeat(4, 1fr)',
+                'gap': '16px'
+            }, "fas fa-chevron-up"
+    return {'display': 'none'}, "fas fa-chevron-down"
+
+# ==================== EHS CARD NAVIGATION ====================
+@app.callback(
+    Output("url", "pathname", allow_duplicate=True),
+    [Input("card-annual-plan", "n_clicks"),
+     Input("card-safety-dashboard", "n_clicks"),
+     Input("card-reports", "n_clicks"),
+     Input("card-project-safety", "n_clicks"),
+     Input("card-training", "n_clicks"),
+     Input("card-work-permit", "n_clicks"),
+     Input("card-risk-assessment", "n_clicks"),
+     Input("card-incident", "n_clicks"),
+     Input("card-contractor", "n_clicks")],
+    prevent_initial_call=True
+)
+def navigate_ehs_cards(annual_plan, safety_dash, reports, project_safety,
+                       training, work_permit, risk_assessment, incident, contractor):
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
+    
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
+    nav_map = {
+        "card-annual-plan": "/annual-ehs-plan",
+        "card-safety-dashboard": "/ehs-safety-dashboard",
+        "card-reports": "/ehs-reports",
+        "card-project-safety": "/ehs-project-safety",
+        "card-training": "/ehs-training-matrix",
+        "card-work-permit": "/work-permit",
+        "card-risk-assessment": "/ehs-risk-assessment",
+        "card-incident": "/incident-management",
+        "card-contractor": "/ehs-contractor"
+    }
+    
+    if button_id in nav_map:
+        return nav_map[button_id]
+    
+    return no_update
+
+# ==================== POLICY AND HR NAVIGATION ====================
+@app.callback(
+    Output("url", "pathname", allow_duplicate=True),
+    [Input("card-objective-monitoring", "n_clicks"),
+     Input("card-policy", "n_clicks")],
+    prevent_initial_call=True
+)
+def navigate_policy_cards(obj_clicks, policy_clicks):
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
+    
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
+    if button_id == "card-objective-monitoring":
+        return "/business-dev"
+    elif button_id == "card-policy":
+        return "/ims-policy"
+    
+    return no_update
+
+@app.callback(
+    Output("url", "pathname", allow_duplicate=True),
+    [Input("card-hr-business-doc", "n_clicks"),
+     Input("card-hr-feedback", "n_clicks")],
+    prevent_initial_call=True
+)
+def navigate_hr_cards(business_clicks, feedback_clicks):
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
+    
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
+    if button_id == "card-hr-business-doc":
+        return "/hr-business"
+    elif button_id == "card-hr-feedback":
+        return "/hr-feedback"
+    
+    return no_update
+
+# ==================== MAIN ROUTER ====================
+@app.callback(
+    Output("page-content", "children"),
+    Input("url", "pathname")
+)
+def router(pathname):
+    if pathname == "/" or pathname == "/dashboard":
+        return dashboard_page()
+    elif pathname == "/mrm":
+        return placeholder_page("Management Review Meeting")
+    elif pathname == "/ims":
+        return placeholder_page("IMS - Integrated Management System")
+    elif pathname == "/ehs":
+        return ehs_dashboard_page()
+    elif pathname == "/ehs-reports":
+        return reports_analytics_page()
+    elif pathname == "/ehs-safety-dashboard":
+        return safety_dashboard_page()
+    elif pathname == "/work-permit":
+        return work_permit_page()
+    elif pathname == "/ehs-walkthrough-reports":
+        return ehs_walkthrough_reports_page()
+    elif pathname == "/annual-ehs-plan":
+        return annual_ehs_plan_page()
+    elif pathname == "/mom-tracking":
+        return mom_tracking_page()
+    elif pathname == "/business-dev":
+        return business_development_page()
+    elif pathname == "/policy-objectives":
+        return policy_objectives_page_content()
+    elif pathname == "/ims-policy":
+        return ims_policy_page_content()
+    elif pathname == "/system-admin":
+        return system_admin()
+    elif pathname == "/hr":
+        return hr_page()
+    elif pathname == "/hr-business":
+        return hr_business_page()
+    elif pathname == "/hr-feedback":
+        return training_feedback_page()
+    elif pathname == "/admin":
+        return admin_page()
+    elif pathname == "/operation":
+        return operation_page()
+    elif pathname == "/procurement":
+        return procurement_page()
+    elif pathname == "/vendor-evaluation":
+        return vendor_evaluation_page()
+    elif pathname == "/training-feedback":
+        return training_feedback_page()
+    elif pathname == "/incident-management":
+        return incident_investigation_page()
+    elif pathname == "/quality-assurance":
+        return quality_assurance_page()
+    elif pathname == "/isms":
+        return isms_page()
+    elif pathname == "/nrc":
+        return nrc_page()
+    
+    # ==================== TICKET PAGES ROUTES ====================
+    elif pathname == "/ticket-safety-observation":
+        return ticket_safety_observation_page()
+    elif pathname == "/ticket-new-joiner":
+        return ticket_new_joiner_page()
+    elif pathname == "/ticket-vendor-orientation":
+        return ticket_vendor_orientation_page()
+    elif pathname == "/ticket-incident-report":
+        return ticket_incident_report_page()
+    
+    elif pathname == "/context-organization":
+        return placeholder_page("Context of the Organization")
+    elif pathname == "/risk-management":
+        return placeholder_page("Risk Management")
+    elif pathname == "/internal-audit":
+        return placeholder_page("Internal Audit")
+    elif pathname == "/non-conformance":
+        return placeholder_page("Non Conformance")
+    elif pathname.startswith("/reports/"):
+        return placeholder_page("Report Details")
+    elif pathname.startswith("/ehs-"):
+        return placeholder_page("EHS Module")
+    else:
+        return placeholder_page("404 - Page Not Found")
+
+# ==================== PAGE FUNCTIONS ====================
 def annual_ehs_plan_page():
     return html.Div([
         html.Div(className="dashboard-header", children=[
@@ -1193,277 +2043,15 @@ def ims_policy_page_content():
     ])
 
 def quality_assurance_page_content():
-    """Quality Assurance page wrapper"""
     return quality_assurance_page()
 
 def isms_page_content():
-    """ISMS page wrapper"""
     return isms_page()
 
 def nrc_page_content():
-    """NRC page wrapper"""
     return nrc_page()
 
-# -------------------- AUTHENTICATION MIDDLEWARE --------------------
-@app.server.before_request
-def check_login():
-    public_routes = ['/login', '/logout', '/download-permit']
-    
-    if any(request.path.startswith(route) for route in public_routes):
-        return None
-    
-    if request.path.startswith('/_dash-') or request.path.startswith('/assets'):
-        return None
-    
-    if 'user_id' not in session:
-        return redirect('/login')
-    
-    return None
-
-# -------------------- MAIN LAYOUT --------------------
-app.layout = html.Div([
-    dcc.Location(id="url", refresh=False),
-    dcc.Store(id="session-store", data={}),
-    dcc.Download(id="download-permit"),
-    html.Div(className="app-container", children=[
-        create_sidebar(logo_data),
-        html.Div(className="main-content", id="page-content")
-    ])
-])
-
-# -------------------- COMBINED NAVIGATION CALLBACKS --------------------
-@app.callback(
-    Output("user-info-sidebar", "children"),
-    Input("url", "pathname")
-)
-def update_user_info(pathname):
-    if 'user_id' in session:
-        name = session.get('name', 'User')
-        username = session.get('username', '')
-        user_type = session.get('user_type', 'user').upper()
-        return html.Div([
-            html.Div(name, className="user-name"),
-            html.Div(username, className="user-role"),
-            html.Div(className="user-role-badge", children=user_type),
-            html.A(className="logout-btn", href="/logout", children=[
-                html.I(className="fas fa-sign-out-alt"), "Logout"
-            ])
-        ])
-    else:
-        return html.Div([
-            html.Div("Guest", className="user-name"),
-            html.Div("", className="user-role"),
-            html.Div(className="user-role-badge", children="GUEST"),
-            html.A(className="logout-btn", href="/login", children=[
-                html.I(className="fas fa-sign-in-alt"), "Login"
-            ])
-        ])
-
-@app.callback(
-    [Output("qms-submenu", "className"),
-     Output("qms-arrow", "className")],
-    [Input("qms-toggle", "n_clicks")],
-    [State("qms-submenu", "className")]
-)
-def toggle_qms_submenu(n_clicks, current_class):
-    if n_clicks and n_clicks > 0:
-        if "expanded" in current_class:
-            return "submenu collapsed", "fas fa-chevron-right arrow-icon"
-        else:
-            return "submenu expanded", "fas fa-chevron-down arrow-icon"
-    return "submenu collapsed", "fas fa-chevron-right arrow-icon"
-
-def create_dots(active_index):
-    if not encoded_images:
-        return html.Div()
-    return html.Div([
-        html.Div(className=f"dot {'active' if i == active_index else ''}", id=f"dot-{i}")
-        for i in range(len(encoded_images))
-    ])
-
-@app.callback(
-    [Output("carousel-index", "data", allow_duplicate=True),
-     Output("current-slide-image", "src", allow_duplicate=True),
-     Output("slide-indicator", "children", allow_duplicate=True),
-     Output("carousel-dots", "children", allow_duplicate=True)],
-    [Input("next-slide", "n_clicks"),
-     Input("prev-slide", "n_clicks")],
-    [State("carousel-index", "data")],
-    prevent_initial_call=True
-)
-def carousel_nav(next_clicks, prev_clicks, current_index):
-    ctx = callback_context
-    if not ctx.triggered:
-        return current_index, encoded_images[current_index] if encoded_images else "", f"{current_index+1} / {len(encoded_images)}" if encoded_images else "0 / 0", create_dots(current_index)
-    
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    current = current_index if current_index else 0
-    total = len(encoded_images)
-    
-    if total == 0:
-        return 0, "", "0 / 0", html.Div()
-    
-    if button_id == "next-slide":
-        new_index = (current + 1) % total
-    elif button_id == "prev-slide":
-        new_index = (current - 1) % total    
-    else:
-        new_index = current
-    
-    return new_index, encoded_images[new_index], f"{new_index+1} / {total}", create_dots(new_index)
-
-@app.callback(
-    Output("url", "pathname", allow_duplicate=True),
-    [Input("card-annual-plan", "n_clicks"),
-     Input("card-safety-dashboard", "n_clicks"),
-     Input("card-reports", "n_clicks"),
-     Input("card-project-safety", "n_clicks"),
-     Input("card-training", "n_clicks"),
-     Input("card-work-permit", "n_clicks"),
-     Input("card-risk-assessment", "n_clicks"),
-     Input("card-incident", "n_clicks"),
-     Input("card-contractor", "n_clicks")],
-    prevent_initial_call=True
-)
-def navigate_ehs_cards(annual_plan, safety_dash, reports, project_safety,
-                       training, work_permit, risk_assessment, incident, contractor):
-    ctx = callback_context
-    if not ctx.triggered:
-        return no_update
-    
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    
-    nav_map = {
-        "card-annual-plan": "/annual-ehs-plan",
-        "card-safety-dashboard": "/ehs-safety-dashboard",
-        "card-reports": "/ehs-reports",
-        "card-project-safety": "/ehs-project-safety",
-        "card-training": "/ehs-training-matrix",
-        "card-work-permit": "/work-permit",
-        "card-risk-assessment": "/ehs-risk-assessment",
-        "card-incident": "/incident-management",
-        "card-contractor": "/ehs-contractor"
-    }
-    
-    if button_id in nav_map:
-        return nav_map[button_id]
-    
-    return no_update
-
-@app.callback(
-    Output("url", "pathname", allow_duplicate=True),
-    [Input("card-objective-monitoring", "n_clicks"),
-     Input("card-policy", "n_clicks")],
-    prevent_initial_call=True
-)
-def navigate_policy_cards(obj_clicks, policy_clicks):
-    ctx = callback_context
-    if not ctx.triggered:
-        return no_update
-    
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    
-    if button_id == "card-objective-monitoring":
-        return "/business-dev"
-    elif button_id == "card-policy":
-        return "/ims-policy"
-    
-    return no_update
-
-# Navigation for HR Cards - HR Business Document and HR Feedback Form
-@app.callback(
-    Output("url", "pathname", allow_duplicate=True),
-    [Input("card-hr-business-doc", "n_clicks"),
-     Input("card-hr-feedback", "n_clicks")],
-    prevent_initial_call=True
-)
-def navigate_hr_cards(business_clicks, feedback_clicks):
-    ctx = callback_context
-    if not ctx.triggered:
-        return no_update
-    
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    
-    if button_id == "card-hr-business-doc":
-        return "/hr-business"
-    elif button_id == "card-hr-feedback":
-        return "/hr-feedback"
-    
-    return no_update
-
-@app.callback(
-    Output("page-content", "children"),
-    Input("url", "pathname")
-)
-def router(pathname):
-    if pathname == "/" or pathname == "/dashboard":
-        return dashboard_page()
-    elif pathname == "/mrm":
-        return placeholder_page("Management Review Meeting")
-    elif pathname == "/ims":
-        return placeholder_page("IMS - Integrated Management System")
-    elif pathname == "/ehs":
-        return ehs_dashboard_page()
-    elif pathname == "/ehs-reports":
-        return reports_analytics_page()
-    elif pathname == "/ehs-safety-dashboard":
-        return safety_dashboard_page()
-    elif pathname == "/work-permit":
-        return work_permit_page()
-    elif pathname == "/ehs-walkthrough-reports":
-        return ehs_walkthrough_reports_page()
-    elif pathname == "/annual-ehs-plan":
-        return annual_ehs_plan_page()
-    elif pathname == "/mom-tracking":
-        return mom_tracking_page()
-    elif pathname == "/business-dev":
-        return business_development_page()
-    elif pathname == "/policy-objectives":
-        return policy_objectives_page_content()
-    elif pathname == "/ims-policy":
-        return ims_policy_page_content()
-    elif pathname == "/system-admin":
-        return system_admin()
-    elif pathname == "/hr":
-        return hr_page()
-    elif pathname == "/hr-business":
-        return hr_business_page()
-    elif pathname == "/hr-feedback":
-        return training_feedback_page()
-    elif pathname == "/admin":
-        return admin_page()
-    elif pathname == "/operation":
-        return operation_page()
-    elif pathname == "/procurement":
-        return procurement_page()
-    elif pathname == "/vendor-evaluation":
-        return vendor_evaluation_page()
-    elif pathname == "/training-feedback":
-        return training_feedback_page()
-    elif pathname == "/incident-management":
-        return incident_investigation_page()
-    elif pathname == "/quality-assurance":
-        return quality_assurance_page()
-    elif pathname == "/isms":
-        return isms_page()
-    elif pathname == "/nrc":  # ADD NRC ROUTE
-        return nrc_page()
-    elif pathname == "/context-organization":
-        return placeholder_page("Context of the Organization")
-    elif pathname == "/risk-management":
-        return placeholder_page("Risk Management")
-    elif pathname == "/internal-audit":
-        return placeholder_page("Internal Audit")
-    elif pathname == "/non-conformance":
-        return placeholder_page("Non Conformance")
-    elif pathname.startswith("/reports/"):
-        return placeholder_page("Report Details")
-    elif pathname.startswith("/ehs-"):
-        return placeholder_page("EHS Module")
-    else:
-        return placeholder_page("404 - Page Not Found")
-
-# Register all callbacks
+# ==================== REGISTER CALLBACKS ====================
 register_work_permit_callbacks(app)
 register_dashboard_callbacks(app)
 register_mom_callbacks(app)
@@ -1482,14 +2070,20 @@ register_ehs_walkthrough_callbacks(app)
 register_incident_investigation_callbacks(app)
 register_qa_callbacks(app)
 register_isms_callbacks(app)
-register_nrc_callbacks(app)  # ADD NRC CALLBACKS
+register_nrc_callbacks(app)
 
-# -------------------- RUN APPLICATION --------------------
+# ==================== REGISTER TICKET CALLBACKS ====================
+register_ticket_safety_callbacks(app)
+register_ticket_joiner_callbacks(app)
+register_ticket_vendor_callbacks(app)
+register_ticket_incident_callbacks(app)
+
+# ==================== RUN APPLICATION ====================
 if __name__ == "__main__":
     print("=" * 60)
     print("INTEGRATED MANAGEMENT SYSTEM")
     print("=" * 60)
-    print("Server starting on http://localhost:8090")
+    print("Server starting on http://localhost:8070")
     print("=" * 60)
     print("Login Credentials:")
     print("   Username: Pratik Bhendekar")
@@ -1518,7 +2112,11 @@ if __name__ == "__main__":
     print("   - Incident Investigation (/incident-management)")
     print("   - Quality Assurance (/quality-assurance)")
     print("   - ISMS (/isms)")
-    print("   - NRC (/nrc)")  # ADD THIS
+    print("   - NRC (/nrc)")
+    print("   - Ticket: Safety Observation (/ticket-safety-observation)")
+    print("   - Ticket: New Joiner (/ticket-new-joiner)")
+    print("   - Ticket: Vendor Orientation (/ticket-vendor-orientation)")
+    print("   - Ticket: Incident Report (/ticket-incident-report)")
     print("=" * 60)
       
-    app.run(debug=True, port=8090, host='127.0.0.1')
+    app.run(debug=True, port=8070, host='127.0.0.1')
