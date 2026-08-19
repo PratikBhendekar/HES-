@@ -1,826 +1,1019 @@
-# pages/ehs_dashboard.py - EHS Dashboard Page with Three Stories
+# pages/ehs_dashboard.py - EHS Dashboard with Advanced Gradient & Modern Design
 
 import dash
 from dash import html, dcc, Input, Output, State, callback_context, no_update
+import dash_bootstrap_components as dbc
 
 def ehs_dashboard_page():
     return html.Div(
         style={
-            'padding': '24px',
-            'background': '#f8fafc',
+            'padding': '0',
+            'background': 'linear-gradient(135deg, #f0f4ff 0%, #e8edf5 50%, #dce3ef 100%)',
             'minHeight': '100vh'
         },
         children=[
-            # Simple Header
-            html.Div(
-                style={'marginBottom': '24px'},
-                children=[
-                    html.H1(
-                        "EHS Dashboard",
-                        style={
-                            'fontSize': '24px',
-                            'fontWeight': '700',
-                            'color': '#1e293b',
-                            'margin': '0 0 4px 0'
-                        }
-                    ),
-                    html.P(
-                        "Environment, Health & Safety Management",
-                        style={
-                            'fontSize': '14px',
-                            'color': '#64748b',
-                            'margin': 0
-                        }
-                    )
-                ]
-            ),
-            
-            # 8 Cards - 2 rows of 4
+            # ==================== HEADER ====================
             html.Div(
                 style={
-                    'display': 'grid',
-                    'gridTemplateColumns': 'repeat(4, 1fr)',
-                    'gap': '20px',
-                    'marginBottom': '24px'
+                    'background': 'rgba(255, 255, 255, 0.85)',
+                    'backdropFilter': 'blur(20px)',
+                    'padding': '0 30px',
+                    'display': 'flex',
+                    'alignItems': 'center',
+                    'justifyContent': 'space-between',
+                    'height': '90px',
+                    'boxShadow': '0 4px 30px rgba(0,0,0,0.05)',
+                    'margin': '0 0 4px 0',
+                    'borderBottom': '1px solid rgba(255,255,255,0.3)'
                 },
                 children=[
-                    # Card 1 - Safety Dashboard (Green)
                     html.Div(
-                        id="card-safety-dashboard",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
+                        style={'display': 'flex', 'alignItems': 'center', 'gap': '12px'},
                         children=[
-                            html.Div(style={'height': '4px', 'background': '#10b981'}),
                             html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#ecfdf5',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-chart-line", style={'color': '#10b981', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Safety Dashboard",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "EHS Dashboard →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
+                                style={
+                                    'width': '44px',
+                                    'height': '44px',
+                                    'background': 'linear-gradient(135deg, #667eea, #764ba2)',
+                                    'borderRadius': '12px',
+                                    'display': 'flex',
+                                    'alignItems': 'center',
+                                    'justifyContent': 'center',
+                                    'boxShadow': '0 4px 15px rgba(102,126,234,0.3)'
+                                },
+                                children=html.I(
+                                    className="fas fa-shield-alt",
+                                    style={'color': '#ffffff', 'fontSize': '20px'}
+                                )
+                            ),
+                            html.Div(
+                                style={
+                                    'fontSize': '22px',
+                                    'fontWeight': '700',
+                                    'color': '#1a2332',
+                                    'fontFamily': "'Inter', 'Segoe UI', sans-serif",
+                                    'letterSpacing': '-0.3px',
+                                    'background': 'linear-gradient(135deg, #1a3a6a, #667eea)',
+                                    '-webkit-background-clip': 'text',
+                                    '-webkit-text-fill-color': 'transparent'
+                                },
+                                children="Welcome to EHS"
                             )
                         ]
                     ),
-                    
-                    # Card 2 - Reports & Analytics (Blue)
                     html.Div(
-                        id="card-reports",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
+                        style={'display': 'flex', 'alignItems': 'center', 'height': '90px', 'padding': '0'},
                         children=[
-                            html.Div(style={'height': '4px', 'background': '#3b82f6'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#dbeafe',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-file-alt", style={'color': '#3b82f6', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Reports & Analytics",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "View All Reports →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 3 - Project Safety (Orange)
-                    html.Div(
-                        id="card-project-safety",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#f59e0b'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#fef3c7',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-hard-hat", style={'color': '#f59e0b', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Project Safety",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Safety Monitoring →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 4 - Training Matrix (Purple)
-                    html.Div(
-                        id="card-training",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#8b5cf6'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#ede9fe',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-graduation-cap", style={'color': '#8b5cf6', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Training Matrix",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Management Matrix →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 5 - Permit Management (Cyan)
-                    html.Div(
-                        id="card-work-permit",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#06b6d4'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#cffafe',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-clipboard-list", style={'color': '#06b6d4', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Permit Management",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Work Permit →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 6 - Risk Management (Red)
-                    html.Div(
-                        id="card-risk-assessment",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#ef4444'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#fee2e2',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-exclamation-triangle", style={'color': '#ef4444', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Risk Management",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Risk Assessment →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 7 - Incident Management (Pink)
-                    html.Div(
-                        id="card-incident",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#ec4899'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#fce7f3',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-bell", style={'color': '#ec4899', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Incident Management",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Incident Alert →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
-                            )
-                        ]
-                    ),
-                    
-                    # Card 8 - Contractor Management (Indigo)
-                    html.Div(
-                        id="card-contractor",
-                        style={
-                            'background': 'white',
-                            'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
-                            'overflow': 'hidden',
-                            'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
-                        },
-                        children=[
-                            html.Div(style={'height': '4px', 'background': '#6366f1'}),
-                            html.Div(
-                                style={'padding': '20px'},
-                                children=[
-                                    html.Div(
-                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '16px'},
-                                        children=[
-                                            html.Div(
-                                                style={
-                                                    'width': '48px',
-                                                    'height': '48px',
-                                                    'background': '#e0e7ff',
-                                                    'borderRadius': '12px',
-                                                    'display': 'flex',
-                                                    'alignItems': 'center',
-                                                    'justifyContent': 'center'
-                                                },
-                                                children=html.I(className="fas fa-handshake", style={'color': '#6366f1', 'fontSize': '22px'})
-                                            ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '14px'})
-                                        ]
-                                    ),
-                                    html.Div([
-                                        html.Div(
-                                            "Contractor Management",
-                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '6px'}
-                                        ),
-                                        html.Div(
-                                            "Performance Monitoring →",
-                                            style={'fontSize': '12px', 'color': '#64748b'}
-                                        )
-                                    ])
-                                ]
+                            html.Img(
+                                src="/assets/ChatGPT Image Aug 18, 2026, 10_01_00 AM.png",
+                                style={
+                                    'height': '90px',
+                                    'width': 'auto',
+                                    'objectFit': 'contain',
+                                    'maxHeight': '90px',
+                                    'borderRadius': '0',
+                                    'border': 'none',
+                                    'padding': '0',
+                                    'background': 'transparent',
+                                    'display': 'block'
+                                }
                             )
                         ]
                     )
                 ]
             ),
             
-            # Annual EHS Plan Card (Full Width)
+            # ==================== MAIN CONTENT ====================
             html.Div(
-                style={
-                    'marginBottom': '24px'
-                },
+                style={'padding': '20px 30px'},
                 children=[
+                    # ==================== RAISE A TICKET - MAIN CARD ====================
                     html.Div(
-                        id="card-annual-plan",
+                        id="raise-ticket-main-card",
                         style={
-                            'background': 'white',
+                            'background': 'linear-gradient(135deg, #ffffff, #f8faff)',
                             'borderRadius': '16px',
-                            'border': '1px solid #e9ecef',
+                            'border': '1px solid rgba(255,255,255,0.6)',
                             'overflow': 'hidden',
                             'cursor': 'pointer',
-                            'transition': 'transform 0.2s, box-shadow 0.2s'
+                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            'marginBottom': '24px',
+                            'boxShadow': '0 8px 32px rgba(0,0,0,0.06)',
+                            'backdropFilter': 'blur(10px)'
                         },
                         children=[
-                            html.Div(style={'height': '4px', 'background': '#667eea'}),
+                            # Top Bar
                             html.Div(
-                                style={'padding': '20px'},
+                                style={'height': '4px', 'background': 'linear-gradient(90deg, #1a3a6a, #667eea, #764ba2)'}
+                            ),
+                            html.Div(
+                                style={'padding': '16px 20px'},
                                 children=[
                                     html.Div(
                                         style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center'},
                                         children=[
                                             html.Div(
-                                                style={'display': 'flex', 'alignItems': 'center', 'gap': '15px'},
+                                                style={'display': 'flex', 'alignItems': 'center', 'gap': '12px'},
                                                 children=[
                                                     html.Div(
                                                         style={
-                                                            'width': '48px',
-                                                            'height': '48px',
-                                                            'background': '#eef2ff',
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #eef2ff, #e0e7ff)',
                                                             'borderRadius': '12px',
                                                             'display': 'flex',
                                                             'alignItems': 'center',
-                                                            'justifyContent': 'center'
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(102,126,234,0.1)'
                                                         },
-                                                        children=html.I(className="fas fa-calendar-alt", style={'color': '#667eea', 'fontSize': '22px'})
+                                                        children=html.I(
+                                                            className="fas fa-ticket-alt",
+                                                            style={'color': '#1a3a6a', 'fontSize': '18px'}
+                                                        )
                                                     ),
                                                     html.Div([
                                                         html.Div(
-                                                            "Annual EHS Activity Plan",
-                                                            style={'fontSize': '16px', 'fontWeight': '700', 'color': '#1e293b', 'marginBottom': '4px'}
+                                                            "Raise a Ticket",
+                                                            style={
+                                                                'fontSize': '15px',
+                                                                'fontWeight': '700',
+                                                                'color': '#1a2332',
+                                                                'background': 'linear-gradient(135deg, #1a3a6a, #667eea)',
+                                                                '-webkit-background-clip': 'text',
+                                                                '-webkit-text-fill-color': 'transparent'
+                                                            }
                                                         ),
                                                         html.Div(
-                                                            "2026-2027 | View Plan",
-                                                            style={'fontSize': '13px', 'color': '#64748b'}
+                                                            "EHS Tickets",
+                                                            style={
+                                                                'fontSize': '12px',
+                                                                'color': '#94a3b8'
+                                                            }
                                                         )
                                                     ])
                                                 ]
                                             ),
-                                            html.I(className="fas fa-arrow-right", style={'color': '#cbd5e1', 'fontSize': '18px'})
+                                            html.I(
+                                                id="raise-ticket-arrow",
+                                                className="fas fa-chevron-down",
+                                                style={
+                                                    'color': '#667eea',
+                                                    'fontSize': '14px',
+                                                    'transition': 'transform 0.4s ease',
+                                                    'background': 'rgba(102,126,234,0.08)',
+                                                    'padding': '8px',
+                                                    'borderRadius': '50%'
+                                                }
+                                            )
+                                        ]
+                                    )
+                                ]
+                            ),
+                            
+                            # ==================== 4 TICKET CARDS ====================
+                            html.Div(
+                                id="ticket-cards-container",
+                                style={
+                                    'display': 'none',
+                                    'padding': '0 20px 20px 20px',
+                                    'gridTemplateColumns': 'repeat(4, 1fr)',
+                                    'gap': '16px'
+                                },
+                                children=[
+                                    # Ticket 1: Safety Observation
+                                    html.Div(
+                                        id="card-safety-ticket",
+                                        style={
+                                            'background': 'linear-gradient(135deg, #ffffff, #f0fdf4)',
+                                            'borderRadius': '14px',
+                                            'border': '1px solid rgba(16,185,129,0.2)',
+                                            'overflow': 'hidden',
+                                            'cursor': 'pointer',
+                                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            'boxShadow': '0 2px 12px rgba(0,0,0,0.04)'
+                                        },
+                                        children=[
+                                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #10b981, #34d399)'}),
+                                            html.Div(
+                                                style={'padding': '16px 18px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                        children=[
+                                                            html.Div(
+                                                                style={
+                                                                    'width': '44px',
+                                                                    'height': '44px',
+                                                                    'background': 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+                                                                    'borderRadius': '12px',
+                                                                    'display': 'flex',
+                                                                    'alignItems': 'center',
+                                                                    'justifyContent': 'center',
+                                                                    'boxShadow': '0 2px 10px rgba(16,185,129,0.15)'
+                                                                },
+                                                                children=html.I(
+                                                                    className="fas fa-shield-alt",
+                                                                    style={'color': '#10b981', 'fontSize': '18px'}
+                                                                )
+                                                            ),
+                                                            html.I(
+                                                                className="fas fa-chevron-right",
+                                                                style={'color': '#10b981', 'fontSize': '12px', 'opacity': '0.5'}
+                                                            )
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        "Safety Observation",
+                                                        style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                                    ),
+                                                    html.Div(
+                                                        "Report safety observations",
+                                                        style={'fontSize': '12px', 'color': '#94a3b8'}
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    ),
+                                    
+                                    # Ticket 2: New Joiner Training
+                                    html.Div(
+                                        id="card-joiner-ticket",
+                                        style={
+                                            'background': 'linear-gradient(135deg, #ffffff, #eff6ff)',
+                                            'borderRadius': '14px',
+                                            'border': '1px solid rgba(59,130,246,0.2)',
+                                            'overflow': 'hidden',
+                                            'cursor': 'pointer',
+                                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            'boxShadow': '0 2px 12px rgba(0,0,0,0.04)'
+                                        },
+                                        children=[
+                                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #3b82f6, #60a5fa)'}),
+                                            html.Div(
+                                                style={'padding': '16px 18px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                        children=[
+                                                            html.Div(
+                                                                style={
+                                                                    'width': '44px',
+                                                                    'height': '44px',
+                                                                    'background': 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
+                                                                    'borderRadius': '12px',
+                                                                    'display': 'flex',
+                                                                    'alignItems': 'center',
+                                                                    'justifyContent': 'center',
+                                                                    'boxShadow': '0 2px 10px rgba(59,130,246,0.15)'
+                                                                },
+                                                                children=html.I(
+                                                                    className="fas fa-user-graduate",
+                                                                    style={'color': '#3b82f6', 'fontSize': '18px'}
+                                                                )
+                                                            ),
+                                                            html.I(
+                                                                className="fas fa-chevron-right",
+                                                                style={'color': '#3b82f6', 'fontSize': '12px', 'opacity': '0.5'}
+                                                            )
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        "New Joiner Training",
+                                                        style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                                    ),
+                                                    html.Div(
+                                                        "Safety induction request",
+                                                        style={'fontSize': '12px', 'color': '#94a3b8'}
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    ),
+                                    
+                                    # Ticket 3: Vendor Orientation
+                                    html.Div(
+                                        id="card-vendor-ticket",
+                                        style={
+                                            'background': 'linear-gradient(135deg, #ffffff, #fffbeb)',
+                                            'borderRadius': '14px',
+                                            'border': '1px solid rgba(245,158,11,0.2)',
+                                            'overflow': 'hidden',
+                                            'cursor': 'pointer',
+                                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            'boxShadow': '0 2px 12px rgba(0,0,0,0.04)'
+                                        },
+                                        children=[
+                                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #f59e0b, #fbbf24)'}),
+                                            html.Div(
+                                                style={'padding': '16px 18px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                        children=[
+                                                            html.Div(
+                                                                style={
+                                                                    'width': '44px',
+                                                                    'height': '44px',
+                                                                    'background': 'linear-gradient(135deg, #fef3c7, #fde68a)',
+                                                                    'borderRadius': '12px',
+                                                                    'display': 'flex',
+                                                                    'alignItems': 'center',
+                                                                    'justifyContent': 'center',
+                                                                    'boxShadow': '0 2px 10px rgba(245,158,11,0.15)'
+                                                                },
+                                                                children=html.I(
+                                                                    className="fas fa-handshake",
+                                                                    style={'color': '#f59e0b', 'fontSize': '18px'}
+                                                                )
+                                                            ),
+                                                            html.I(
+                                                                className="fas fa-chevron-right",
+                                                                style={'color': '#f59e0b', 'fontSize': '12px', 'opacity': '0.5'}
+                                                            )
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        "Vendor Orientation",
+                                                        style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                                    ),
+                                                    html.Div(
+                                                        "EHS orientation request",
+                                                        style={'fontSize': '12px', 'color': '#94a3b8'}
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    ),
+                                    
+                                    # Ticket 4: Incident Report
+                                    html.Div(
+                                        id="card-incident-ticket",
+                                        style={
+                                            'background': 'linear-gradient(135deg, #ffffff, #fef2f2)',
+                                            'borderRadius': '14px',
+                                            'border': '1px solid rgba(239,68,68,0.2)',
+                                            'overflow': 'hidden',
+                                            'cursor': 'pointer',
+                                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            'boxShadow': '0 2px 12px rgba(0,0,0,0.04)'
+                                        },
+                                        children=[
+                                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #ef4444, #f87171)'}),
+                                            html.Div(
+                                                style={'padding': '16px 18px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                        children=[
+                                                            html.Div(
+                                                                style={
+                                                                    'width': '44px',
+                                                                    'height': '44px',
+                                                                    'background': 'linear-gradient(135deg, #fee2e2, #fecaca)',
+                                                                    'borderRadius': '12px',
+                                                                    'display': 'flex',
+                                                                    'alignItems': 'center',
+                                                                    'justifyContent': 'center',
+                                                                    'boxShadow': '0 2px 10px rgba(239,68,68,0.15)'
+                                                                },
+                                                                children=html.I(
+                                                                    className="fas fa-exclamation-triangle",
+                                                                    style={'color': '#ef4444', 'fontSize': '18px'}
+                                                                )
+                                                            ),
+                                                            html.I(
+                                                                className="fas fa-chevron-right",
+                                                                style={'color': '#ef4444', 'fontSize': '12px', 'opacity': '0.5'}
+                                                            )
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        "Incident Report",
+                                                        style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                                    ),
+                                                    html.Div(
+                                                        "Report incidents",
+                                                        style={'fontSize': '12px', 'color': '#94a3b8'}
+                                                    )
+                                                ]
+                                            )
                                         ]
                                     )
                                 ]
                             )
                         ]
-                    )
-                ]
-            ),
-            
-            # ==================== STORY 1: TREE PLANTATION (TOP - GREEN) - 4 PHOTOS ====================
-            html.Div(
-                style={
-                    'background': 'white',
-                    'borderRadius': '16px',
-                    'border': '1px solid #e9ecef',
-                    'overflow': 'hidden',
-                    'marginBottom': '24px'
-                },
-                children=[
-                    html.Div(style={'height': '4px', 'background': '#065f46'}),
+                    ),
+                    
+                    # ==================== 8 EHS CARDS ====================
                     html.Div(
-                        style={'padding': '24px'},
+                        style={
+                            'display': 'grid',
+                            'gridTemplateColumns': 'repeat(4, 1fr)',
+                            'gap': '16px',
+                            'marginBottom': '24px'
+                        },
                         children=[
-                            html.H3(
-                                "World Environment Day 2026 - Tree Plantation at Head Office, Nagpur",
-                                style={
-                                    'fontSize': '20px',
-                                    'fontWeight': '700',
-                                    'color': '#1e293b',
-                                    'marginBottom': '4px',
-                                    'fontFamily': "'Poppins', sans-serif"
-                                }
-                            ),
-                            html.P("05 June 2026", style={'fontSize': '14px', 'color': '#64748b', 'marginBottom': '16px'}),
-                            
+                            # Card 1 - Safety Dashboard
                             html.Div(
-                                style={'lineHeight': '1.8', 'color': '#475569', 'fontSize': '14px', 'marginBottom': '20px'},
+                                id="card-safety-dashboard",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #f0fdf4)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(16,185,129,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
                                 children=[
-                                    html.P(
-                                        "On 5th June 2026, the EHS team at Head Office, Nagpur, celebrated World Environment Day with great enthusiasm. The day began with a powerful message about environmental conservation and the importance of tree plantation.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "More than 50 trees of various species were planted across the campus. The event saw active participation from over 100 employees, including senior management. Each participant pledged to nurture the planted trees and contribute to a greener tomorrow.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "The initiative was part of our ongoing commitment to environmental sustainability and aligns with our IMS policy. The tree plantation drive not only beautified the campus but also contributed to reducing carbon footprint.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "We thank all participants for making this event a grand success. Together, we are creating a sustainable future.",
-                                        style={'fontWeight': '600', 'color': '#065f46', 'marginBottom': '0'}
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #10b981, #34d399)'}),
+                                    html.Div(
+                                        style={'padding': '16px 18px'},
+                                        children=[
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(16,185,129,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-chart-line", style={'color': '#10b981', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#10b981', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Safety Dashboard",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "EHS Dashboard",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
+                                        ]
                                     )
                                 ]
                             ),
                             
-                            html.Hr(style={'border': '1px solid #eef2f6', 'margin': '0 0 20px 0'}),
-                            
+                            # Card 2 - Reports & Analytics
                             html.Div(
-                                style={'display': 'flex', 'alignItems': 'center', 'gap': '10px', 'marginBottom': '16px'},
+                                id="card-reports",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #eff6ff)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(59,130,246,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
                                 children=[
-                                    html.I(className="fas fa-images", style={'color': '#065f46', 'fontSize': '18px'}),
-                                    html.H4("Event Photos", style={'margin': '0', 'fontSize': '16px', 'fontWeight': '600', 'color': '#1e293b'})
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #3b82f6, #60a5fa)'}),
+                                    html.Div(
+                                        style={'padding': '16px 18px'},
+                                        children=[
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #dbeafe, #bfdbfe)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(59,130,246,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-file-alt", style={'color': '#3b82f6', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#3b82f6', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Reports & Analytics",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "View All Reports",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
+                                        ]
+                                    )
                                 ]
                             ),
                             
-                            # 4 PHOTOS IN 2x2 GRID
+                            # Card 3 - Project Safety
                             html.Div(
+                                id="card-project-safety",
                                 style={
-                                    'display': 'grid',
-                                    'gridTemplateColumns': 'repeat(2, 1fr)',
-                                    'gap': '16px'
+                                    'background': 'linear-gradient(135deg, #ffffff, #fffbeb)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(245,158,11,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
                                 },
                                 children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #f59e0b, #fbbf24)'}),
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={'padding': '16px 18px'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0599.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Tree Plantation Ceremony", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #fef3c7, #fde68a)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(245,158,11,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-hard-hat", style={'color': '#f59e0b', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#f59e0b', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Project Safety",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Safety Monitoring",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
                                         ]
-                                    ),
+                                    )
+                                ]
+                            ),
+                            
+                            # Card 4 - Training Matrix
+                            html.Div(
+                                id="card-training",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #f5f3ff)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(139,92,246,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
+                                children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #8b5cf6, #a78bfa)'}),
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={'padding': '16px 18px'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0613.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Team Participation", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #ede9fe, #ddd6fe)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(139,92,246,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-graduation-cap", style={'color': '#8b5cf6', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#8b5cf6', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Training Matrix",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Management Matrix",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
                                         ]
-                                    ),
+                                    )
+                                ]
+                            ),
+                            
+                            # Card 5 - Permit Management
+                            html.Div(
+                                id="card-work-permit",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #ecfeff)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(6,182,212,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
+                                children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #06b6d4, #22d3ee)'}),
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={'padding': '16px 18px'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0609.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Plantation Drive", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #cffafe, #a5f3fc)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(6,182,212,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-clipboard-list", style={'color': '#06b6d4', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#06b6d4', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Permit Management",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Work Permit",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
                                         ]
-                                    ),
+                                    )
+                                ]
+                            ),
+                            
+                            # Card 6 - Risk Management
+                            html.Div(
+                                id="card-risk-assessment",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #fef2f2)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(239,68,68,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
+                                children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #ef4444, #f87171)'}),
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={'padding': '16px 18px'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0606.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Green Initiative", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #fee2e2, #fecaca)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(239,68,68,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-exclamation-triangle", style={'color': '#ef4444', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#ef4444', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Risk Management",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Risk Assessment",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
+                                        ]
+                                    )
+                                ]
+                            ),
+                            
+                            # Card 7 - Incident Management
+                            html.Div(
+                                id="card-incident",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #fdf2f8)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(236,72,153,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
+                                children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #ec4899, #f472b6)'}),
+                                    html.Div(
+                                        style={'padding': '16px 18px'},
+                                        children=[
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #fce7f3, #fbcfe8)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(236,72,153,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-bell", style={'color': '#ec4899', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#ec4899', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Incident Management",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Incident Alert",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
+                                        ]
+                                    )
+                                ]
+                            ),
+                            
+                            # Card 8 - Contractor Management
+                            html.Div(
+                                id="card-contractor",
+                                style={
+                                    'background': 'linear-gradient(135deg, #ffffff, #eef2ff)',
+                                    'borderRadius': '14px',
+                                    'border': '1px solid rgba(99,102,241,0.15)',
+                                    'overflow': 'hidden',
+                                    'cursor': 'pointer',
+                                    'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                                },
+                                children=[
+                                    html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #6366f1, #818cf8)'}),
+                                    html.Div(
+                                        style={'padding': '16px 18px'},
+                                        children=[
+                                            html.Div(
+                                                style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'flex-start', 'marginBottom': '10px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #e0e7ff, #c7d2fe)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(99,102,241,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-handshake", style={'color': '#6366f1', 'fontSize': '18px'})
+                                                    ),
+                                                    html.I(className="fas fa-chevron-right", style={'color': '#6366f1', 'fontSize': '12px', 'opacity': '0.5'})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                "Contractor Management",
+                                                style={'fontSize': '14px', 'fontWeight': '600', 'color': '#1a2332', 'marginBottom': '2px'}
+                                            ),
+                                            html.Div(
+                                                "Performance Monitoring",
+                                                style={'fontSize': '12px', 'color': '#94a3b8'}
+                                            )
                                         ]
                                     )
                                 ]
                             )
                         ]
-                    )
-                ]
-            ),
-            
-            # ==================== STORY 2: FIRST AID TRAINING (MIDDLE - RED) - 4 PHOTOS ====================
-            html.Div(
-                style={
-                    'background': 'white',
-                    'borderRadius': '16px',
-                    'border': '1px solid #e9ecef',
-                    'overflow': 'hidden',
-                    'marginBottom': '24px'
-                },
-                children=[
-                    html.Div(style={'height': '4px', 'background': '#dc2626'}),
+                    ),
+                    
+                    # ==================== ANNUAL EHS PLAN CARD ====================
                     html.Div(
-                        style={'padding': '24px'},
+                        id="card-annual-plan",
+                        style={
+                            'background': 'linear-gradient(135deg, #ffffff, #eef2ff)',
+                            'borderRadius': '14px',
+                            'border': '1px solid rgba(102,126,234,0.2)',
+                            'overflow': 'hidden',
+                            'cursor': 'pointer',
+                            'transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            'marginBottom': '24px',
+                            'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                        },
                         children=[
-                            html.H3(
-                                "First Aid Training for ERT Team Members at Head Office, Nagpur",
-                                style={
-                                    'fontSize': '20px',
-                                    'fontWeight': '700',
-                                    'color': '#1e293b',
-                                    'marginBottom': '4px',
-                                    'fontFamily': "'Poppins', sans-serif"
-                                }
-                            ),
-                            html.P("06 June 2026", style={'fontSize': '14px', 'color': '#64748b', 'marginBottom': '16px'}),
-                            
+                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #667eea, #764ba2)'}),
                             html.Div(
-                                style={'lineHeight': '1.8', 'color': '#475569', 'fontSize': '14px', 'marginBottom': '20px'},
-                                children=[
-                                    html.P(
-                                        "On 6th June 2026, the EHS department organized a comprehensive First Aid Training program for the Emergency Response Team (ERT) members at the Head Office, Nagpur. The training was conducted to enhance the emergency response capabilities of the ERT team.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "The training covered essential first aid techniques including CPR, wound dressing, fracture management, and handling medical emergencies. Participants received hands-on practice sessions with medical equipment and learned how to respond effectively in emergency situations.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "More than 25 ERT team members actively participated in the training program. The session was led by certified medical trainers who shared practical knowledge and real-life case studies. The team members demonstrated great enthusiasm and commitment to learning life-saving skills.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "This initiative is part of our ongoing commitment to workplace safety and aligns with our IMS policy. We thank all participants and trainers for making this training a success.",
-                                        style={'fontWeight': '600', 'color': '#dc2626', 'marginBottom': '0'}
-                                    )
-                                ]
-                            ),
-                            
-                            html.Hr(style={'border': '1px solid #eef2f6', 'margin': '0 0 20px 0'}),
-                            
-                            html.Div(
-                                style={'display': 'flex', 'alignItems': 'center', 'gap': '10px', 'marginBottom': '16px'},
-                                children=[
-                                    html.I(className="fas fa-images", style={'color': '#dc2626', 'fontSize': '18px'}),
-                                    html.H4("Training Photos", style={'margin': '0', 'fontSize': '16px', 'fontWeight': '600', 'color': '#1e293b'})
-                                ]
-                            ),
-                            
-                            # 4 PHOTOS IN 2x2 GRID
-                            html.Div(
-                                style={
-                                    'display': 'grid',
-                                    'gridTemplateColumns': 'repeat(2, 1fr)',
-                                    'gap': '16px'
-                                },
+                                style={'padding': '16px 20px'},
                                 children=[
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0549.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("First Aid Training Session", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0555.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("ERT Team Participation", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0573.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Hands-on Practice", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0574.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Training Demonstration", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Div(
+                                                style={'display': 'flex', 'alignItems': 'center', 'gap': '12px'},
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            'width': '44px',
+                                                            'height': '44px',
+                                                            'background': 'linear-gradient(135deg, #eef2ff, #e0e7ff)',
+                                                            'borderRadius': '12px',
+                                                            'display': 'flex',
+                                                            'alignItems': 'center',
+                                                            'justifyContent': 'center',
+                                                            'boxShadow': '0 2px 10px rgba(102,126,234,0.15)'
+                                                        },
+                                                        children=html.I(className="fas fa-calendar-alt", style={'color': '#667eea', 'fontSize': '18px'})
+                                                    ),
+                                                    html.Div([
+                                                        html.Div(
+                                                            "Annual EHS Activity Plan",
+                                                            style={
+                                                                'fontSize': '14px',
+                                                                'fontWeight': '600',
+                                                                'color': '#1a2332'
+                                                            }
+                                                        ),
+                                                        html.Div(
+                                                            "2026-2027",
+                                                            style={
+                                                                'fontSize': '12px',
+                                                                'color': '#94a3b8'
+                                                            }
+                                                        )
+                                                    ])
+                                                ]
+                                            ),
+                                            html.I(
+                                                className="fas fa-chevron-right",
+                                                style={'color': '#667eea', 'fontSize': '14px', 'opacity': '0.5'}
+                                            )
                                         ]
                                     )
                                 ]
                             )
                         ]
-                    )
-                ]
-            ),
-            
-            # ==================== STORY 3: MEDICAL HEALTH CHECKUP CAMP (BOTTOM - BLUE) - 8 PHOTOS ====================
-            html.Div(
-                style={
-                    'background': 'white',
-                    'borderRadius': '16px',
-                    'border': '1px solid #e9ecef',
-                    'overflow': 'hidden',
-                    'marginBottom': '24px'
-                },
-                children=[
-                    html.Div(style={'height': '4px', 'background': '#3b82f6'}),
+                    ),
+                    
+                    # ==================== THREE STORIES ====================
+                    # Story 1: Tree Plantation
                     html.Div(
-                        style={'padding': '24px'},
+                        style={
+                            'background': 'linear-gradient(135deg, #ffffff, #f0fdf4)',
+                            'borderRadius': '14px',
+                            'border': '1px solid rgba(6,95,70,0.1)',
+                            'overflow': 'hidden',
+                            'marginBottom': '20px',
+                            'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                        },
                         children=[
-                            html.H3(
-                                "Medical Health Checkup Camp at Head Office, Nagpur",
-                                style={
-                                    'fontSize': '20px',
-                                    'fontWeight': '700',
-                                    'color': '#1e293b',
-                                    'marginBottom': '4px',
-                                    'fontFamily': "'Poppins', sans-serif"
-                                }
-                            ),
-                            html.P("05 June 2026", style={'fontSize': '14px', 'color': '#64748b', 'marginBottom': '16px'}),
-                            
+                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #065f46, #34d399)'}),
                             html.Div(
-                                style={'lineHeight': '1.8', 'color': '#475569', 'fontSize': '14px', 'marginBottom': '20px'},
+                                style={'padding': '20px 24px'},
                                 children=[
-                                    html.P(
-                                        "On 5th June 2026, the EHS department organized a Medical Health Checkup Camp at Head Office, Nagpur. The camp was organized to promote employee wellness and ensure the overall health and well-being of all employees.",
-                                        style={'marginBottom': '10px'}
+                                    html.Div(
+                                        "World Environment Day 2026 - Tree Plantation at Head Office, Nagpur",
+                                        style={
+                                            'fontSize': '18px',
+                                            'fontWeight': '600',
+                                            'color': '#1a2332',
+                                            'marginBottom': '4px'
+                                        }
                                     ),
-                                    html.P(
-                                        "The health checkup camp provided comprehensive medical screenings including blood pressure check, blood sugar testing, BMI analysis, eye checkup, and general health consultation. More than 150 employees participated in the camp and availed the health screening services.",
-                                        style={'marginBottom': '10px'}
+                                    html.Div("05 June 2026", style={'fontSize': '13px', 'color': '#94a3b8', 'marginBottom': '12px'}),
+                                    html.Div(
+                                        style={'fontSize': '13px', 'color': '#475569', 'lineHeight': '1.6', 'marginBottom': '16px'},
+                                        children=[
+                                            "On 5th June 2026, the EHS team at Head Office, Nagpur, celebrated World Environment Day with great enthusiasm. More than 50 trees were planted across the campus with participation from over 100 employees."
+                                        ]
                                     ),
-                                    html.P(
-                                        "A team of qualified doctors and medical professionals conducted the checkups and provided health advice to the employees. The camp also included health awareness sessions on topics like stress management, healthy lifestyle, and prevention of lifestyle diseases.",
-                                        style={'marginBottom': '10px'}
-                                    ),
-                                    html.P(
-                                        "The initiative was highly appreciated by the employees and is part of our ongoing commitment to employee health and wellness. We thank all participants and the medical team for making this camp a grand success.",
-                                        style={'fontWeight': '600', 'color': '#3b82f6', 'marginBottom': '0'}
+                                    html.Div(
+                                        style={
+                                            'display': 'grid',
+                                            'gridTemplateColumns': 'repeat(4, 1fr)',
+                                            'gap': '12px'
+                                        },
+                                        children=[
+                                            html.Img(src="/assets/IMG_0599.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0613.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0609.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0606.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'})
+                                        ]
                                     )
                                 ]
-                            ),
-                            
-                            html.Hr(style={'border': '1px solid #eef2f6', 'margin': '0 0 20px 0'}),
-                            
+                            )
+                        ]
+                    ),
+                    
+                    # Story 2: First Aid Training
+                    html.Div(
+                        style={
+                            'background': 'linear-gradient(135deg, #ffffff, #fef2f2)',
+                            'borderRadius': '14px',
+                            'border': '1px solid rgba(220,38,38,0.1)',
+                            'overflow': 'hidden',
+                            'marginBottom': '20px',
+                            'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                        },
+                        children=[
+                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #dc2626, #f87171)'}),
                             html.Div(
-                                style={'display': 'flex', 'alignItems': 'center', 'gap': '10px', 'marginBottom': '16px'},
+                                style={'padding': '20px 24px'},
                                 children=[
-                                    html.I(className="fas fa-images", style={'color': '#3b82f6', 'fontSize': '18px'}),
-                                    html.H4("Camp Photos", style={'margin': '0', 'fontSize': '16px', 'fontWeight': '600', 'color': '#1e293b'})
+                                    html.Div(
+                                        "First Aid Training for ERT Team Members at Head Office, Nagpur",
+                                        style={
+                                            'fontSize': '18px',
+                                            'fontWeight': '600',
+                                            'color': '#1a2332',
+                                            'marginBottom': '4px'
+                                        }
+                                    ),
+                                    html.Div("06 June 2026", style={'fontSize': '13px', 'color': '#94a3b8', 'marginBottom': '12px'}),
+                                    html.Div(
+                                        style={'fontSize': '13px', 'color': '#475569', 'lineHeight': '1.6', 'marginBottom': '16px'},
+                                        children=[
+                                            "On 6th June 2026, the EHS department organized a comprehensive First Aid Training program for the Emergency Response Team (ERT) members. More than 25 team members participated in the training."
+                                        ]
+                                    ),
+                                    html.Div(
+                                        style={
+                                            'display': 'grid',
+                                            'gridTemplateColumns': 'repeat(4, 1fr)',
+                                            'gap': '12px'
+                                        },
+                                        children=[
+                                            html.Img(src="/assets/IMG_0549.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0555.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0573.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0574.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'})
+                                        ]
+                                    )
                                 ]
-                            ),
-                            
-                            # 8 PHOTOS IN 2x2 GRID (4 rows of 2) - SAME SIZE AS OTHERS
+                            )
+                        ]
+                    ),
+                    
+                    # Story 3: Medical Health Checkup
+                    html.Div(
+                        style={
+                            'background': 'linear-gradient(135deg, #ffffff, #eff6ff)',
+                            'borderRadius': '14px',
+                            'border': '1px solid rgba(59,130,246,0.1)',
+                            'overflow': 'hidden',
+                            'boxShadow': '0 4px 20px rgba(0,0,0,0.04)'
+                        },
+                        children=[
+                            html.Div(style={'height': '4px', 'background': 'linear-gradient(90deg, #3b82f6, #60a5fa)'}),
                             html.Div(
-                                style={
-                                    'display': 'grid',
-                                    'gridTemplateColumns': 'repeat(2, 1fr)',
-                                    'gap': '16px'
-                                },
+                                style={'padding': '20px 24px'},
                                 children=[
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        "Medical Health Checkup Camp at Head Office, Nagpur",
+                                        style={
+                                            'fontSize': '18px',
+                                            'fontWeight': '600',
+                                            'color': '#1a2332',
+                                            'marginBottom': '4px'
+                                        }
+                                    ),
+                                    html.Div("05 June 2026", style={'fontSize': '13px', 'color': '#94a3b8', 'marginBottom': '12px'}),
+                                    html.Div(
+                                        style={'fontSize': '13px', 'color': '#475569', 'lineHeight': '1.6', 'marginBottom': '16px'},
                                         children=[
-                                            html.Img(src="/assets/IMG_0576.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Health Checkup Camp", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            "On 5th June 2026, the EHS department organized a Medical Health Checkup Camp at Head Office. More than 150 employees participated in the health screening services."
                                         ]
                                     ),
                                     html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
+                                        style={
+                                            'display': 'grid',
+                                            'gridTemplateColumns': 'repeat(4, 1fr)',
+                                            'gap': '12px'
+                                        },
                                         children=[
-                                            html.Img(src="/assets/IMG_0516.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Blood Pressure Check", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0519.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Medical Consultation", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0522.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Employee Participation", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0549.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Health Screening", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0555.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Medical Team", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0573.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Employee Registration", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
-                                        ]
-                                    ),
-                                    html.Div(
-                                        style={'borderRadius': '10px', 'overflow': 'hidden', 'border': '1px solid #e2e8f0', 'background': '#f8fafc'},
-                                        children=[
-                                            html.Img(src="/assets/IMG_0574.JPG", style={'width': '100%', 'height': 'auto', 'aspectRatio': '16/9', 'objectFit': 'cover', 'display': 'block'}),
-                                            html.Div("Health Awareness Session", style={'padding': '8px 12px', 'background': '#f8fafc', 'fontSize': '12px', 'fontWeight': '500', 'color': '#1e293b', 'textAlign': 'center'})
+                                            html.Img(src="/assets/IMG_0576.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0516.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0519.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'}),
+                                            html.Img(src="/assets/IMG_0522.JPG", style={'width': '100%', 'aspectRatio': '16/10', 'objectFit': 'cover', 'borderRadius': '8px', 'border': '1px solid #e8ecf1'})
                                         ]
                                     )
                                 ]
@@ -833,9 +1026,59 @@ def ehs_dashboard_page():
     )
 
 
+# ==================== CALLBACKS ====================
 def register_ehs_dashboard_callbacks(app):
-    """Register callbacks for EHS dashboard navigation"""
+    """Register callbacks for EHS dashboard navigation and ticket toggle"""
     
+    # ==================== TOGGLE TICKET CARDS ====================
+    @app.callback(
+        [Output("ticket-cards-container", "style"),
+         Output("raise-ticket-arrow", "className")],
+        [Input("raise-ticket-main-card", "n_clicks")],
+        [State("ticket-cards-container", "style")]
+    )
+    def toggle_ticket_cards(n_clicks, current_style):
+        if n_clicks and n_clicks > 0:
+            if current_style and current_style.get('display') == 'grid':
+                return {'display': 'none'}, "fas fa-chevron-down"
+            else:
+                return {
+                    'display': 'grid',
+                    'padding': '0 20px 20px 20px',
+                    'gridTemplateColumns': 'repeat(4, 1fr)',
+                    'gap': '16px'
+                }, "fas fa-chevron-up"
+        return {'display': 'none'}, "fas fa-chevron-down"
+    
+    # ==================== TICKET CARD NAVIGATION ====================
+    @app.callback(
+        Output("url", "pathname", allow_duplicate=True),
+        [Input("card-safety-ticket", "n_clicks"),
+         Input("card-joiner-ticket", "n_clicks"),
+         Input("card-vendor-ticket", "n_clicks"),
+         Input("card-incident-ticket", "n_clicks")],
+        prevent_initial_call=True
+    )
+    def navigate_ticket_cards(safety, joiner, vendor, incident):
+        ctx = callback_context
+        if not ctx.triggered:
+            return no_update
+        
+        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+        
+        nav_map = {
+            "card-safety-ticket": "/ticket-safety-observation",
+            "card-joiner-ticket": "/ticket-new-joiner",
+            "card-vendor-ticket": "/ticket-vendor-orientation",
+            "card-incident-ticket": "/ticket-incident-report"
+        }
+        
+        if button_id in nav_map:
+            return nav_map[button_id]
+        
+        return no_update
+    
+    # ==================== EHS CARD NAVIGATION ====================
     @app.callback(
         Output("url", "pathname", allow_duplicate=True),
         [Input("card-safety-dashboard", "n_clicks"),
